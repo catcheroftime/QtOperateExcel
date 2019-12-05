@@ -54,7 +54,7 @@ void ExportExcel::initProgress(const int &size)
         m_pProgressDialog = new QProgressDialog();//其实这一步就已经开始显示进度条了
 
     m_pProgressDialog->setAutoClose(false);
-    m_pProgressDialog->setWindowFlags(m_pProgressDialog->windowFlags() | Qt::FramelessWindowHint);//去掉标题栏
+    m_pProgressDialog->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);//去掉标题栏
     m_pProgressDialog->setLabelText(tr("生成文件中..."));
     m_pProgressDialog->setCancelButton(0);
     m_pProgressDialog->setRange(0,size);

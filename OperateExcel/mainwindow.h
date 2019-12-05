@@ -22,8 +22,7 @@ private:
 private slots:
     void on_ptn_export_clicked();
     void on_ptn_import_clicked();
-
-
+    void on_ptn_selectall_clicked(bool checked);
 
 private:
     Ui::MainWindow *ui;

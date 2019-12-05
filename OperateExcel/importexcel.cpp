@@ -34,7 +34,7 @@ void ImportExcel::initProgress(const int &size)
         m_pProgressDialog = new QProgressDialog();//其实这一步就已经开始显示进度条了
 
     m_pProgressDialog->setAutoClose(false);
-    m_pProgressDialog->setWindowFlags(m_pProgressDialog->windowFlags() | Qt::FramelessWindowHint);//去掉标题栏
+    m_pProgressDialog->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);//去掉标题栏
     m_pProgressDialog->setLabelText(tr("分析文件中..."));
     m_pProgressDialog->setCancelButton(0);
     m_pProgressDialog->setRange(0,size);
@@ -81,10 +81,8 @@ void ImportExcel::readExcel(const QString &filepath)
     QAxObject *work_sheets = work_book->querySubObject("Sheets");  //Sheets也可换用WorkSheets
     int sheet_count = work_sheets->property("Count").toInt();  //获取工作表数目
 
-    int content_count = getExcelContentCount(work_book,sheet_count);
-    qDebug() << content_count ;
-
     m_pProgressDialog->setLabelText(tr("导入中..."));
+    int content_count = getExcelContentCount(work_book,sheet_count);
     QCoreApplication::processEvents();
 
     int index = 1;

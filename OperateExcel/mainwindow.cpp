@@ -23,6 +23,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::initView()
 {
+    ui->ptn_selectall->setCheckable(true);
+    ui->ptn_selectall->setChecked(false);
+
     m_headerList = QStringList{ "姓名", "性别" , "年龄"};
     ui->treeWidget_showinfo->setHeaderLabels(m_headerList);
 }
@@ -73,3 +76,22 @@ void MainWindow::on_ptn_import_clicked()
     }
 }
 
+
+void MainWindow::on_ptn_selectall_clicked(bool checked)
+{
+    Qt::CheckState state;
+    if (checked) {
+        state = Qt::Checked;
+        ui->ptn_selectall->setText("取消全选");
+    }
+    else {
+        state = Qt::Unchecked;
+        ui->ptn_selectall->setText("全选");
+    }
+
+    QTreeWidgetItemIterator it(ui->treeWidget_showinfo);
+    while ( *it ) {
+        (*it)->setCheckState(0, state);
+        ++it;
+    }
+}
