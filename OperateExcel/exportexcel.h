@@ -26,13 +26,19 @@ public:
     ExportError exportStatus();
 
 private:
-    ExportError m_status;
+    ExportError       m_status;
+    QProgressDialog * m_pProgressDialog;
     QAxObject * m_pApp;
     QAxObject * m_pWorkbooks;
     QAxObject * m_pWorkbook;
     QAxObject * m_pSheet;
 
 private:
+    void initProgress(const int &size);
+    void showProgress(const int &index);
+    void releaseProgress();
+
+
 
     bool newExcel(const QString &storagepath);
     void setCellsInfo(const QList<QStringList> &storeinfo, const QStringList &header);

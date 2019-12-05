@@ -2,9 +2,9 @@
 #define IMPORTEXCEL_H
 
 #include <QDialog>
-#include <ActiveQt\QAxWidget>
-#include <ActiveQt\QAxObject>
-#include <QProgressDialog>
+
+class QAxObject;
+class QProgressDialog;
 
 class ImportExcel :public QDialog
 {
@@ -19,12 +19,14 @@ public:
 private:
     void initProgress(const int &size);
     void showProgress(const int &index);
+    void releaseProgress();
 
     void readExcel(const QString &filepath);
     int getExcelContentCount(QAxObject *work_book,const int &sheet_count);
 
 private:
     QList<QStringList> m_result;
+    QProgressDialog * m_pProgressDialog;
 
 };
 
