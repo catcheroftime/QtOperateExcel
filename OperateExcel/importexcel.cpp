@@ -1,5 +1,4 @@
 #include "importexcel.h"
-
 #include "progressrate.h"
 
 #include <QDebug>
@@ -29,10 +28,6 @@ QList<QStringList> ImportExcel::getImportExcelData()
     return m_result;
 }
 
-
-
-
-
 void ImportExcel::readExcel(const QString &filepath)
 {
     m_pProgress->initProgress(1000, "分析文件中...");
@@ -47,8 +42,8 @@ void ImportExcel::readExcel(const QString &filepath)
     work_books->dynamicCall("Open (const QString&)",xlsFile);
 
     QAxObject *work_book = excel.querySubObject("ActiveWorkBook");
-    QAxObject *work_sheets = work_book->querySubObject("Sheets");  //Sheets也可换用WorkSheets
-    int sheet_count = work_sheets->property("Count").toInt();  //获取工作表数目
+    QAxObject *work_sheets = work_book->querySubObject("Sheets");
+    int sheet_count = work_sheets->property("Count").toInt();
 
     m_pProgress->updateDescription(tr("导入中..."));
     int content_count = getExcelContentCount(work_book,sheet_count);

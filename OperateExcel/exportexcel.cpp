@@ -1,7 +1,6 @@
 #include "exportexcel.h"
 #include "progressrate.h"
 
-
 #include <QDir>
 #include <QFile>
 #include <QCoreApplication>
