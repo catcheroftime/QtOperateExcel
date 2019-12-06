@@ -1,11 +1,13 @@
 #ifndef EXPORTEXCEL_H
 #define EXPORTEXCEL_H
 
-#include "progressrate.h"
+
+#include "QObject"
 
 class QAxObject;
+class ProgressRate;
 
-class ExportExcel : public ProgressRate
+class ExportExcel : public QObject
 {
     Q_OBJECT
 
@@ -26,6 +28,7 @@ public:
 
 private:
     ExportError   m_status;
+    ProgressRate *m_pProgress;
     QAxObject    *m_pApp;
     QAxObject    *m_pWorkbooks;
     QAxObject    *m_pWorkbook;

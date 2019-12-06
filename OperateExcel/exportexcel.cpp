@@ -1,4 +1,6 @@
 #include "exportexcel.h"
+#include "progressrate.h"
+
 
 #include <QDir>
 #include <QFile>
@@ -8,8 +10,9 @@
 
 
 ExportExcel::ExportExcel(const QList<QStringList> &storeinfo, const QStringList &header,const  QString &storagepath, QWidget *parent)
-    : ProgressRate(parent)
+    : QObject(parent)
     , m_status(NoError)
+    , m_pProgress(new ProgressRate)
 {
     int count = storeinfo.size();
     if (count != 0) {
@@ -22,12 +25,12 @@ ExportExcel::ExportExcel(const QList<QStringList> &storeinfo, const QStringList 
         return;
     }
 
-    initProgress(count+1, "生成文件中...");
-    showProgress(0);
+    m_pProgress->initProgress(count+1, "生成文件中...");
+    m_pProgress->showProgress(0);
 
     if (newExcel(storagepath)) {
-        updateDescription(tr("导出中..."));
-        QCoreApplication::processEvents();
+        m_pProgress->updateDescription(tr("导出中..."));
+
 
         setCellsInfo(storeinfo, header);
         saveExcel(storagepath);
@@ -37,12 +40,12 @@ ExportExcel::ExportExcel(const QList<QStringList> &storeinfo, const QStringList 
         return;
     }
 
-    releaseProgress();
+    m_pProgress->releaseProgress();
 }
 
 ExportExcel::~ExportExcel()
 {
-
+    delete m_pProgress;
 }
 
 ExportExcel::ExportError ExportExcel::exportStatus()
@@ -80,7 +83,7 @@ void ExportExcel::setCellsInfo(const QList<QStringList> &storeinfo, const QStrin
     for (int col=2; col< header.size()+2; ++col) {
         setCellValue(col, 1, header.at(col-2));
     }
-    showProgress(1);
+    m_pProgress->showProgress(1);
 
     // create row info
     for (int row=2; row< storeinfo.size()+2; ++row) {
@@ -91,7 +94,7 @@ void ExportExcel::setCellsInfo(const QList<QStringList> &storeinfo, const QStrin
             QString info = rowinfo.at(col-2);
             setCellValue(col,row,info);
         }
-        showProgress(row);
+        m_pProgress->showProgress(row);
     }
 
 }

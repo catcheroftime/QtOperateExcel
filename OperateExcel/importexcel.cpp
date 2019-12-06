@@ -1,10 +1,11 @@
 #include "importexcel.h"
 
+#include "progressrate.h"
+
 #include <QDebug>
 #include <QCoreApplication>
 #include <ActiveQt\QAxWidget>
 #include <ActiveQt\QAxObject>
-#include <QProgressDialog>
 
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(p) { if(p){delete(p);  (p)=NULL;} }
@@ -12,7 +13,8 @@
 
 
 ImportExcel::ImportExcel(const QString &filepath, QWidget *parent)
-    : ProgressRate(parent)
+    : QObject(parent)
+    , m_pProgress(new ProgressRate)
 {
     readExcel(filepath);
 }
@@ -33,8 +35,8 @@ QList<QStringList> ImportExcel::getImportExcelData()
 
 void ImportExcel::readExcel(const QString &filepath)
 {
-    initProgress(1000, "分析文件中...");
-    showProgress(0);
+    m_pProgress->initProgress(1000, "分析文件中...");
+    m_pProgress->showProgress(0);
 
     QString xlsFile = filepath;
     xlsFile.replace("/","\\");//获取文件目录并斜杠转成双反斜杠
@@ -48,7 +50,7 @@ void ImportExcel::readExcel(const QString &filepath)
     QAxObject *work_sheets = work_book->querySubObject("Sheets");  //Sheets也可换用WorkSheets
     int sheet_count = work_sheets->property("Count").toInt();  //获取工作表数目
 
-    updateDescription(tr("导入中..."));
+    m_pProgress->updateDescription(tr("导入中..."));
     int content_count = getExcelContentCount(work_book,sheet_count);
 
     int index = 1;
@@ -73,7 +75,7 @@ void ImportExcel::readExcel(const QString &filepath)
                 info.append(cell_info);
             }
             m_result.append(info);
-            this->showProgress(index*1000/content_count);
+            m_pProgress->showProgress(index*1000/content_count);
             index++;
         }
         SAFE_DELETE(used_range);
@@ -87,7 +89,7 @@ void ImportExcel::readExcel(const QString &filepath)
     SAFE_DELETE(work_book);
     SAFE_DELETE(work_books);
 
-    releaseProgress();
+    m_pProgress->releaseProgress();
 
 }
 

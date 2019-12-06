@@ -1,12 +1,12 @@
 #ifndef IMPORTEXCEL_H
 #define IMPORTEXCEL_H
 
-#include "progressrate.h"
+#include <QObject>
 
 class QAxObject;
-class QProgressDialog;
+class ProgressRate;
 
-class ImportExcel :public ProgressRate
+class ImportExcel :public QObject
 {
     Q_OBJECT
 
@@ -22,6 +22,7 @@ private:
 
 private:
     QList<QStringList> m_result;
+    ProgressRate       *m_pProgress;
 };
 
 #endif // IMPORTEXCEL_H
