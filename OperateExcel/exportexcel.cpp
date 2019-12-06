@@ -3,11 +3,13 @@
 #include <QDir>
 #include <QFile>
 #include <QCoreApplication>
+#include <ActiveQt\QAxWidget>
+#include <ActiveQt\QAxObject>
+
 
 ExportExcel::ExportExcel(const QList<QStringList> &storeinfo, const QStringList &header,const  QString &storagepath, QWidget *parent)
-    : QDialog(parent)
+    : ProgressRate(parent)
     , m_status(NoError)
-    , m_pProgressDialog(0)
 {
     int count = storeinfo.size();
     if (count != 0) {
@@ -20,11 +22,11 @@ ExportExcel::ExportExcel(const QList<QStringList> &storeinfo, const QStringList 
         return;
     }
 
-    initProgress(count+1);
+    initProgress(count+1, "生成文件中...");
     showProgress(0);
 
     if (newExcel(storagepath)) {
-        m_pProgressDialog->setLabelText(tr("导出中..."));
+        updateDescription(tr("导出中..."));
         QCoreApplication::processEvents();
 
         setCellsInfo(storeinfo, header);
@@ -47,41 +49,6 @@ ExportExcel::ExportError ExportExcel::exportStatus()
 {
     return m_status;
 }
-
-void ExportExcel::initProgress(const int &size)
-{
-    if (!m_pProgressDialog)
-        m_pProgressDialog = new QProgressDialog();//其实这一步就已经开始显示进度条了
-
-    m_pProgressDialog->setAutoClose(false);
-    m_pProgressDialog->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);//去掉标题栏
-    m_pProgressDialog->setLabelText(tr("生成文件中..."));
-    m_pProgressDialog->setCancelButton(0);
-    m_pProgressDialog->setRange(0,size);
-    m_pProgressDialog->setModal(true);
-    m_pProgressDialog->setWindowModality(Qt::WindowModal);
-    m_pProgressDialog->setMinimumDuration(0);
-    m_pProgressDialog->show();
-    QCoreApplication::processEvents();
-}
-
-void ExportExcel::showProgress(const int &index)
-{
-    int show_index = index;
-    if (show_index == m_pProgressDialog->maximum())
-        show_index -= 1;
-    m_pProgressDialog->setValue(show_index);
-    QCoreApplication::processEvents();
-}
-
-void ExportExcel::releaseProgress()
-{
-    m_pProgressDialog->close();
-    m_pProgressDialog->deleteLater();
-    m_pProgressDialog = 0;
-}
-
-
 
 bool ExportExcel::newExcel(const QString &storagepath)
 {

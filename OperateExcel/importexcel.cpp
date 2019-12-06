@@ -12,8 +12,7 @@
 
 
 ImportExcel::ImportExcel(const QString &filepath, QWidget *parent)
-    : QDialog(parent)
-    , m_pProgressDialog(0)
+    : ProgressRate(parent)
 {
     readExcel(filepath);
 }
@@ -28,46 +27,14 @@ QList<QStringList> ImportExcel::getImportExcelData()
     return m_result;
 }
 
-void ImportExcel::initProgress(const int &size)
-{
-    if (!m_pProgressDialog)
-        m_pProgressDialog = new QProgressDialog();//其实这一步就已经开始显示进度条了
 
-    m_pProgressDialog->setAutoClose(false);
-    m_pProgressDialog->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);//去掉标题栏
-    m_pProgressDialog->setLabelText(tr("分析文件中..."));
-    m_pProgressDialog->setCancelButton(0);
-    m_pProgressDialog->setRange(0,size);
-    m_pProgressDialog->setModal(true);
-    m_pProgressDialog->setWindowModality(Qt::WindowModal);
-    m_pProgressDialog->setMinimumDuration(0);
-    m_pProgressDialog->show();
-    QCoreApplication::processEvents();
-}
 
-void ImportExcel::showProgress(const int &index)
-{
-    int show_index = index;
-    if (show_index == m_pProgressDialog->maximum())
-        show_index -= 1;
-
-    m_pProgressDialog->setValue(show_index);
-    QCoreApplication::processEvents();
-}
-
-void ImportExcel::releaseProgress()
-{
-    m_pProgressDialog->close();
-    m_pProgressDialog->deleteLater();
-    m_pProgressDialog = 0;
-}
 
 
 void ImportExcel::readExcel(const QString &filepath)
 {
-    initProgress(1000);
+    initProgress(1000, "分析文件中...");
     showProgress(0);
-
 
     QString xlsFile = filepath;
     xlsFile.replace("/","\\");//获取文件目录并斜杠转成双反斜杠
@@ -81,9 +48,8 @@ void ImportExcel::readExcel(const QString &filepath)
     QAxObject *work_sheets = work_book->querySubObject("Sheets");  //Sheets也可换用WorkSheets
     int sheet_count = work_sheets->property("Count").toInt();  //获取工作表数目
 
-    m_pProgressDialog->setLabelText(tr("导入中..."));
+    updateDescription(tr("导入中..."));
     int content_count = getExcelContentCount(work_book,sheet_count);
-    QCoreApplication::processEvents();
 
     int index = 1;
     for(int sheet_i =1 ;sheet_i<= sheet_count; sheet_i++)
